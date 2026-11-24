@@ -1,0 +1,4 @@
+#!/bin/sh
+# Launch the Calamares installer from the live session (Wayland-friendly)
+exec sudo --preserve-env=WAYLAND_DISPLAY,XDG_RUNTIME_DIR,XDG_SESSION_TYPE,QT_QPA_PLATFORM,DISPLAY,XAUTHORITY \
+    env QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-wayland;xcb}" calamares "$@"

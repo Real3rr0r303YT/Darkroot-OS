@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Darkroot OS - welcome assistant on first login: Claude Code + Spicetify
+MARK="${XDG_CONFIG_HOME:-$HOME/.config}/darkroot/firstlogin-done"
+
+if [[ ${1-} == --autostart ]]; then
+    [[ -e $MARK ]] && exit 0
+    for term in foot gnome-terminal; do
+        command -v "$term" >/dev/null || continue
+        [[ $term == foot ]] && exec foot -T "Welcome to Darkroot OS" -e "$0"
+        exec gnome-terminal --title "Welcome to Darkroot OS" -- "$0"
+    done
+    exit 0
+fi
+
+set -uo pipefail
+P=$'\e[1;35m'; G=$'\e[1;32m'; R=$'\e[1;31m'; N=$'\e[0m'
+step() { printf '\n%s━━ %s ━━%s\n' "$P" "$*" "$N"; }
+ok()   { printf '%s ✔%s %s\n' "$G" "$N" "$*"; }
+fail() { printf '%s ✘%s %s\n' "$R" "$N" "$*"; FAILED=1; }
+FAILED=0
+
+printf '%sWelcome to Darkroot OS, %s!%s\n' "$P" "$USER" "$N"
+echo "Setting up a few things for you. This takes a minute."
+
+step "Claude Code"
+if command -v claude >/dev/null || [[ -x $HOME/.local/bin/claude ]]; then
+    ok "already installed"
+elif curl -fsSL https://claude.ai/install.sh | bash; then
+    ok "Claude Code installed - run it in a terminal with: claude"
+else
+    fail "Claude Code (retry later: curl -fsSL https://claude.ai/install.sh | bash)"
+fi
+grep -q '.local/bin' "$HOME/.bashrc" 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+
+step "Spicetify for Spotify"
+darkroot-spicetify --install-only || fail "Spicetify"
+
+mkdir -p "$(dirname "$MARK")"
+touch "$MARK"
+step "Done"
+(( FAILED )) && echo "Some steps failed - you can run 'darkroot-firstlogin' again any time."
+cat <<EOF
+
+  Next steps
+   1. Open Spotify once, sign in and close it again
+   2. Run:  darkroot-spicetify       (themes + Marketplace)
+   3. Claude Code:  claude
+   4. Switch look:  darkroot-theme hacker   /   darkroot-theme apple
+   5. Services:     dr-sv list
+
+  Keys: SUPER+Return terminal · SUPER+Space launcher · SUPER+Q close · SUPER+1..9 workspaces
+EOF
+read -rp $'\nPress Enter to close.' _

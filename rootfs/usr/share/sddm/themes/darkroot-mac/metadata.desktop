@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=Darkroot Mac
+Description=macOS-inspired login for Darkroot OS
+Author=Darkroot OS
+License=GPL-3.0
+Type=sddm-theme
+Version=2.0
+Website=https://github.com/Real3rr0r303YT/Darkroot-OS
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=darkroot-mac
+Theme-API=2.0
+QtVersion=6

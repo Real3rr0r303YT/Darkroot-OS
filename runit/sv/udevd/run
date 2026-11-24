@@ -1,4 +1,0 @@
-#!/bin/sh
-. /etc/runit/functions
-UDEVD=$(find_udevd) || { echo "udevd nicht gefunden"; sv down udevd; exit 1; }
-exec "$UDEVD"

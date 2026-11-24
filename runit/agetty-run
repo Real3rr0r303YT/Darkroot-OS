@@ -1,4 +1,0 @@
-#!/bin/sh
-# Darkroot: Login-Konsole (Verzeichnisname agetty-ttyN bestimmt das TTY)
-tty=${PWD##*-}
-exec setsid agetty --noclear "$tty" 38400 linux

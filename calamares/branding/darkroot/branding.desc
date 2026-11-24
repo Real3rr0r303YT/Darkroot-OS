@@ -1,0 +1,39 @@
+---
+componentName: darkroot
+
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+
+windowExpanding: normal
+windowSize: 960px,640px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
+
+strings:
+    productName:         Darkroot OS
+    shortProductName:    Darkroot
+    version:             2026.11
+    shortVersion:        2026.11
+    versionedName:       Darkroot OS 2026.11
+    shortVersionedName:  Darkroot 2026.11
+    bootloaderEntryName: Darkroot
+    productUrl:          https://real3rr0r303yt.github.io/Darkroot-OS/
+    supportUrl:          https://github.com/Real3rr0r303YT/Darkroot-OS/issues
+    knownIssuesUrl:      https://github.com/Real3rr0r303YT/Darkroot-OS/issues
+    releaseNotesUrl:     https://github.com/Real3rr0r303YT/Darkroot-OS/releases
+
+images:
+    productLogo:    "logo.png"
+    productIcon:    "logo.png"
+    productWelcome: "welcome.png"
+
+slideshow: "show.qml"
+slideshowAPI: 2
+
+style:
+    SidebarBackground:        "#0B0B12"
+    SidebarText:              "#9A9AB0"
+    SidebarTextCurrent:       "#FFFFFF"
+    SidebarBackgroundCurrent: "#8B5CF6"

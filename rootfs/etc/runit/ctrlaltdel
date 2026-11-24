@@ -1,0 +1,5 @@
+#!/bin/sh
+# Darkroot runit - Ctrl+Alt+Del: reboot
+. /etc/runit/functions
+chmod 100 /run/runit/stopit /run/runit/reboot
+echo "The system is rebooting ..." | wall 2>/dev/null

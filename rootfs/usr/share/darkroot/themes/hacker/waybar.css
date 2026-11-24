@@ -1,0 +1,12 @@
+/* Darkroot theme: hacker */
+@define-color bar_bg   rgba(0, 0, 0, 0.85);
+@define-color dock_bg  rgba(7, 17, 11, 0.92);
+@define-color popup_bg rgba(7, 17, 11, 0.97);
+@define-color tile     rgba(0, 255, 156, 0.06);
+@define-color hover    rgba(0, 255, 156, 0.12);
+@define-color line     rgba(0, 255, 156, 0.35);
+@define-color fg       #c8ffd9;
+@define-color muted    #3faf6a;
+@define-color accent   #00ff9c;
+@define-color on_accent #000000;
+* { font-family: "JetBrains Mono", "Font Awesome 6 Free", "Font Awesome 6 Brands", monospace; }

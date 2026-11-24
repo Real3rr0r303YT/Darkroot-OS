@@ -1,0 +1,47 @@
+// Darkroot Shell - menu bar (top)
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "spacing": 6,
+    "modules-left": ["custom/logo", "hyprland/window"],
+    "modules-center": ["hyprland/workspaces"],
+    "modules-right": ["tray", "pulseaudio", "network", "battery", "clock"],
+
+    "custom/logo": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "pkill wofi || wofi --show drun"
+    },
+    "hyprland/window": {
+        "max-length": 60,
+        "separate-outputs": true
+    },
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": { "default": "○", "active": "●" },
+        "persistent-workspaces": { "*": 5 }
+    },
+    "tray": { "spacing": 10 },
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "",
+        "format-icons": { "default": ["", "", ""] },
+        "on-click": "pavucontrol"
+    },
+    "network": {
+        "format-wifi": "  {signalStrength}%",
+        "format-ethernet": "",
+        "format-disconnected": "",
+        "tooltip-format": "{ifname}  {ipaddr}",
+        "on-click": "nm-connection-editor"
+    },
+    "battery": {
+        "format": "{icon}  {capacity}%",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "clock": {
+        "format": "{:%a %d %b   %H:%M}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    }
+}

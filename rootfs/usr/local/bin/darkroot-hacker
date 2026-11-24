@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# darkroot-hacker - Darkroot OS Hacker Mode
+#   darkroot-hacker --status    show which tools are installed
+#   darkroot-hacker --install   install the toolkit + hacker look (root)
+#   darkroot-hacker --extras    add Pentoo overlay tools: metasploit, burpsuite, gobuster (root)
+set -uo pipefail
+G=$'\e[1;32m'; D=$'\e[2m'; N=$'\e[0m'
+TOOLS=(nmap wireshark tcpdump masscan nikto hydra nc aircrack-ng john hashcat sqlmap r2 mitmproxy binwalk msfconsole burpsuite gobuster)
+
+case ${1:---status} in
+    --status)
+        printf '%s$ darkroot-hacker --status%s\n' "$G" "$N"
+        i=0
+        for t in "${TOOLS[@]}"; do
+            if command -v "$t" >/dev/null; then printf '%s[✓]%s %-14s' "$G" "$N" "$t"; else printf '%s[ ] %-14s%s' "$D" "$t" "$N"; fi
+            i=$((i + 1)); (( i % 3 == 0 )) && echo
+        done
+        echo ;;
+    --install)
+        [[ $EUID -eq 0 ]] || exec sudo "$0" --install
+        /usr/local/lib/darkroot/hacker.sh install
+        echo "Hacker Mode installed. Run 'darkroot-theme hacker' as your user for the hacker look."
+        ;;
+    --extras)
+        [[ $EUID -eq 0 ]] || exec sudo "$0" --extras
+        eselect repository list -i | grep -q pentoo || eselect repository enable pentoo
+        emaint sync -r pentoo
+        echo '*/*::pentoo ~amd64' > /etc/portage/package.accept_keywords/darkroot-pentoo
+        emerge --getbinpkg --keep-going --noreplace --autounmask=y --autounmask-continue=y \
+            net-analyzer/metasploit net-analyzer/burpsuite net-analyzer/gobuster
+        ;;
+    *) sed -n '2,6p' "$0" ;;
+esac

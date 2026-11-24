@@ -1,0 +1,28 @@
+#!/bin/sh
+# Darkroot: reboot / poweroff / halt / shutdown
+# Works under runit (default) and under openrc-init as a fallback.
+name=${0##*/}
+act=0
+case "$name" in
+    reboot) act=6 ;;
+    poweroff|halt) act=0 ;;
+    shutdown)
+        for a in "$@"; do
+            case "$a" in -r|--reboot) act=6 ;; esac
+        done ;;
+esac
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo "$name: must be run as root (sudo $name)" >&2
+    exit 1
+fi
+
+pid1=$(cat /proc/1/comm 2>/dev/null)
+case "$pid1" in
+    runit) exec /sbin/runit-init "$act" ;;
+    openrc-init)
+        if [ "$act" = 6 ]; then exec openrc-shutdown -r now; else exec openrc-shutdown -p now; fi ;;
+    *)
+        echo "$name: unknown init system '$pid1'" >&2
+        exit 1 ;;
+esac

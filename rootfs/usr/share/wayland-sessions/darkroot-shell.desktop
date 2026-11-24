@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Darkroot Shell
+Comment=Apple-style Hyprland desktop by Darkroot OS
+Exec=Hyprland
+Type=Application
+DesktopNames=Hyprland

@@ -1,74 +1,116 @@
-# 🖤 Darkroot Linux
+<p align="center">
+  <img src="assets/logo.svg" width="128" alt="Darkroot OS logo">
+</p>
 
-**Gentoo, aber so einfach wie CachyOS.** Ein Installer, ein paar Fragen und am Ende steht ein fertiger Desktop.
+<h1 align="center">Darkroot OS</h1>
+<p align="center"><b>Gentoo power. Apple calm.</b><br>
+A Gentoo-based Linux distribution with its own runit init, a Calamares installer,<br>
+two debloated desktops and a Hacker Mode.</p>
+
+<p align="center">
+  <a href="https://real3rr0r303yt.github.io/Darkroot-OS/">Website</a> ·
+  <a href="https://github.com/Real3rr0r303YT/Darkroot-OS/releases/latest">Download ISO</a> ·
+  <a href="https://www.figma.com/design/MoCl76XVKbHAKoxHiNiZUb">Design (Figma)</a>
+</p>
+
+---
+
+## Overview
 
 | | |
 |---|---|
-| **Basis** | Gentoo Linux (Profil `23.0/desktop/plasma`, Binärpakete vom offiziellen Binhost) |
-| **Init** | Darkroot-runit: eigene Stages 1/2/3 und Dienste in `/etc/sv` |
-| **Desktop** | KDE Plasma im macOS-Look (WhiteSur, Menüleiste und Dock) |
-| **Login** | SDDM mit eigenem Theme **Darkroot Mac** |
-| **Netzwerk** | NetworkManager |
-| **Apps** | VS Code, Spotify + Spicetify, Claude Code, Firefox, Konsole, Dolphin |
-| **Kernel** | `gentoo-kernel-bin` + linux-firmware, GRUB (UEFI und BIOS) |
+| **Base** | Gentoo Linux (`23.0/desktop` profile, prebuilt packages from Gentoo's official binhost) |
+| **Init** | **Darkroot runit**: its own stage 1/2/3 scripts, services in `/etc/sv`, the `dr-sv` tool |
+| **Installer** | **Calamares** live ISO (UEFI + BIOS), plus a text installer |
+| **Editions** | **Darkroot Shell** (Apple-style Hyprland) or **GNOME Minimal** |
+| **Hacker Mode** | Optional security toolkit plus a green-on-black theme for login, desktop and terminal |
+| **Login** | SDDM with custom themes: `darkroot-mac` and `darkroot-hacker` |
+| **Network** | NetworkManager (`nm-applet` in the menu bar) |
+| **Apps** | VS Code, Firefox, Spotify + Spicetify, Claude Code |
 
-## Installation
+## Editions
 
-1. Boote die [Gentoo Minimal ISO](https://www.gentoo.org/downloads/) (oder eine andere x86_64 Live-Distro).
-2. Verbinde dich mit dem Internet (LAN geht automatisch, für WLAN `net-setup`).
-3. Lade den Installer herunter und starte ihn:
+### Darkroot Shell (Hyprland, Apple-style)
+- A glassy menu bar at the top (Waybar), a centered dock at the bottom, blur, rounded corners and spring animations
+- Debloated: Hyprland, Waybar, wofi, foot, mako, Thunar, and nothing more
+- Switch between Apple and Hacker looks at any time with `darkroot-theme apple|hacker` or **SUPER+T**
 
+| Keys | Action |
+|---|---|
+| `SUPER + Return` | Terminal (foot) |
+| `SUPER + Space` | Search / app launcher (wofi) |
+| `SUPER + Q` | Close window |
+| `SUPER + E` / `B` / `C` | Files / Firefox / VS Code |
+| `SUPER + 1…9` | Switch workspace (`+ SHIFT` moves the window) |
+| `SUPER + F` / `V` | Fullscreen / float |
+| `SUPER + L` | Lock screen |
+| `SUPER + T` | Toggle Apple / Hacker theme |
+| `SUPER + SHIFT + S` | Screenshot of an area to the clipboard |
+
+### GNOME Minimal
+`gnome-light` plus Terminal: only the shell, Files, Settings and Terminal. It comes with a dark theme, the Darkroot wallpaper and window buttons on the left.
+
+### Hacker Mode
+Tick it in Calamares, or run `darkroot-hacker --install` later. It installs:
+`nmap` · `wireshark` · `tcpdump` · `masscan` · `nikto` · `hydra` · `netcat` · `aircrack-ng` · `john` · `hashcat` · `sqlmap` · `radare2` · `mitmproxy` · `binwalk`
+
+`darkroot-hacker --extras` adds Metasploit, Burp Suite and gobuster from the Pentoo overlay.
+Only use these tools on systems you own or are allowed to test.
+
+## Install
+
+### Live ISO (recommended)
+1. Download the ISO from [Releases](https://github.com/Real3rr0r303YT/Darkroot-OS/releases/latest).
+2. Flash it with Ventoy, balenaEtcher or `dd`:
+   ```sh
+   sudo dd if=darkroot-2026.11-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync
+   ```
+3. Boot it, try the Darkroot Shell, and click the **download icon** in the dock to start Calamares.
+
+### Text installer
+From any x86_64 live system (for example the Gentoo minimal ISO):
 ```sh
 curl -fsSL https://github.com/Real3rr0r303YT/Darkroot-OS/archive/refs/heads/main.tar.gz | tar xz
-cd Darkroot-OS-main
-bash install.sh
+cd Darkroot-OS-main && bash install.sh
 ```
 
-Der Installer fragt nach Festplatte, Benutzer, Sprache, Tastatur und Grafikkarte. Danach läuft er von allein durch, nur die Passwörter gibst du noch selbst ein.
+## Darkroot runit
 
-> ⚠️ Die ausgewählte Festplatte wird **komplett gelöscht**.
-
-Die meisten Pakete kommen als Binärpakete, trotzdem dauert die Installation je nach Rechner **1–3 Stunden**.
-
-## Nach dem ersten Login
-
-Beim ersten Login öffnet sich automatisch der Willkommens-Assistent. Er:
-
-- installiert den macOS-Look (WhiteSur: Theme, Icons, Cursor, Dock-Layout)
-- installiert **Claude Code** (`claude` im Terminal)
-- lädt **Spicetify** herunter
-
-Danach Spotify einmal öffnen, anmelden, schließen und anschließend ausführen:
-
-```sh
-darkroot-spicetify
-```
-
-## Darkroot-runit
-
-| Befehl | Funktion |
+| Command | What it does |
 |---|---|
-| `dr-sv list` | alle Dienste und ihren Status anzeigen |
-| `sudo dr-sv enable bluetoothd` | Dienst aktivieren |
-| `sudo dr-sv disable chronyd` | Dienst deaktivieren |
-| `sudo dr-sv restart NetworkManager` | Dienst neu starten |
+| `dr-sv list` | List all services and their state |
+| `sudo dr-sv enable bluetoothd` | Enable and start a service |
+| `sudo dr-sv disable chronyd` | Stop and disable a service |
+| `sudo dr-sv restart NetworkManager` | Restart a service |
 
-Eigene Dienste: Ordner `/etc/sv/NAME/` mit einem ausführbaren `run`-Skript anlegen und anschließend `dr-sv enable NAME` ausführen.
+To add your own service, create `/etc/sv/NAME/run` and then run `sudo dr-sv enable NAME`.
+**Fallback:** in GRUB press `e` and replace `init=/sbin/runit-init` with `init=/sbin/openrc-init`.
 
-**Fallback:** Falls runit einmal nicht startet, im GRUB-Menü `e` drücken und
-`init=/sbin/runit-init` durch `init=/sbin/openrc-init` ersetzen.
+## Build the ISO yourself
 
-## Projektstruktur
-
-```
-install.sh              Teil 1: Live-System (Partitionen, Stage3, chroot)
-chroot-install.sh       Teil 2: im neuen System (Pakete, Kernel, Konfig)
-lib/ui.sh               Farben, Fragen und Auswahlmenüs
-runit/                  1, 2, 3, ctrlaltdel, Dienste (sv/), dr-sv
-sddm-theme/darkroot-mac SDDM-Login im macOS-Stil (QML)
-firstlogin/             Willkommens-Assistent + Spicetify-Helfer
+On a Gentoo or Darkroot machine with about 40 GB of free space:
+```sh
+git clone https://github.com/Real3rr0r303YT/Darkroot-OS.git && cd Darkroot-OS
+sudo ./iso/build-iso.sh          # → out/darkroot-YYYY.MM-x86_64.iso
 ```
 
-## Lizenz
+## Repository layout
 
-GPL-3.0
+```
+install.sh, chroot-install.sh   text installer
+iso/                            live ISO builder (stage3 → squashfs → grub-mkrescue)
+calamares/                      Calamares settings, modules and branding
+overlay/                        Portage overlay with darkroot-base/* meta packages
+rootfs/                         files copied into the system: runit, services, SDDM themes,
+                                Hyprland/Waybar configs, themes, darkroot-* tools
+lib/                            shared shell libraries
+docs/                           GitHub Pages website
+assets/                         logo
+```
+
+## Website (GitHub Pages)
+Go to **Settings → Pages → Build and deployment**, choose **Deploy from a branch**, select branch **main** and folder **/docs**, then save.
+The site will be live at `https://real3rr0r303yt.github.io/Darkroot-OS/`.
+
+## License
+GPL-3.0. Darkroot OS is built on Gentoo Linux and is not affiliated with the Gentoo Foundation.

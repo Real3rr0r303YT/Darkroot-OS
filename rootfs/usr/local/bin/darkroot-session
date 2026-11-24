@@ -1,0 +1,21 @@
+#!/bin/sh
+# Darkroot Shell - started once by Hyprland (exec-once). Brings up the desktop pieces.
+command -v gentoo-pipewire-launcher >/dev/null && gentoo-pipewire-launcher restart &
+
+# first run for this user: apply the default theme (apple, or hacker after Hacker Mode)
+[ -f "$HOME/.config/darkroot/applied" ] || darkroot-theme "$(cat "$HOME/.config/darkroot/theme" 2>/dev/null || cat /etc/darkroot/default-theme 2>/dev/null || echo apple)" --quiet
+
+darkroot-theme --start-wallpaper &
+waybar &
+waybar -c "$HOME/.config/waybar/dock.jsonc" -s "$HOME/.config/waybar/dock.css" &
+mako &
+nm-applet --indicator &
+lxqt-policykit-agent &
+hypridle &
+
+if [ -e /etc/darkroot/live ]; then
+    notify-send -i darkroot "Welcome to Darkroot OS" "Try the live desktop, then click the download icon in the dock to install." &
+else
+    darkroot-firstlogin --autostart &
+fi
+wait

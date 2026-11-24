@@ -1,0 +1,45 @@
+/* Darkroot Shell - menu bar. Colors + font come from theme.css (darkroot-theme) */
+@import "theme.css";
+
+* {
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    font-size: 13px;
+}
+
+window#waybar {
+    background: @bar_bg;
+    color: @fg;
+    border-bottom: 1px solid @line;
+}
+
+#custom-logo {
+    color: @accent;
+    font-size: 15px;
+    padding: 0 12px 0 14px;
+}
+
+#window {
+    font-weight: 600;
+    padding: 0 8px;
+}
+
+#workspaces button {
+    color: @muted;
+    padding: 0 5px;
+    background: transparent;
+}
+#workspaces button.active { color: @accent; }
+#workspaces button:hover { background: @hover; border-radius: 6px; }
+
+#tray, #pulseaudio, #network, #battery, #clock {
+    padding: 0 10px;
+}
+#clock { padding-right: 14px; font-weight: 500; }
+
+tooltip {
+    background: @popup_bg;
+    border: 1px solid @line;
+    border-radius: 10px;
+}

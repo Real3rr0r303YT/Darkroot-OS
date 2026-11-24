@@ -1,0 +1,7 @@
+window { margin: 0; border: 1px solid rgba(0,255,156,0.5); border-radius: 4px; background-color: rgba(0,0,0,0.94); font-family: "JetBrains Mono", monospace; font-size: 14px; }
+#input { margin: 12px; padding: 10px 14px; border: 1px solid rgba(0,255,156,0.35); border-radius: 2px; background-color: #07110b; color: #00ff9c; }
+#outer-box { margin: 0; }
+#scroll { margin: 0 8px 10px; }
+#entry { padding: 8px 10px; color: #c8ffd9; }
+#entry:selected { background-color: #00ff9c; }
+#text:selected { color: #000000; }

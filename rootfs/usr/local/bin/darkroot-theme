@@ -1,0 +1,60 @@
+#!/bin/bash
+# darkroot-theme - switch the Darkroot Shell between the Apple and Hacker looks.
+#   darkroot-theme apple|hacker|toggle [--quiet]
+#   darkroot-theme --start-wallpaper        (used by darkroot-session)
+#   sudo darkroot-theme apple|hacker --login   also switch the SDDM login theme
+set -uo pipefail
+THEMES=/usr/share/darkroot/themes
+CFG=${XDG_CONFIG_HOME:-$HOME/.config}
+STATE=$CFG/darkroot/theme
+
+current() { cat "$STATE" 2>/dev/null || echo apple; }
+
+start_wallpaper() {
+    pkill -x swaybg 2>/dev/null
+    exec swaybg -m fill -i "$THEMES/$(current)/wallpaper.png"
+}
+
+[[ ${1-} == --start-wallpaper ]] && start_wallpaper
+
+theme=${1:-toggle}
+quiet=0; login=0
+for a in "$@"; do
+    case $a in --quiet) quiet=1 ;; --login) login=1 ;; esac
+done
+[[ $theme == toggle ]] && { [[ $(current) == apple ]] && theme=hacker || theme=apple; }
+[[ -d $THEMES/$theme ]] || { echo "unknown theme: $theme (use apple or hacker)" >&2; exit 1; }
+
+if (( login )); then
+    [[ $EUID -eq 0 ]] || exec sudo "$0" "$theme" --login
+    sddm_theme=$([[ $theme == hacker ]] && echo darkroot-hacker || echo darkroot-mac)
+    sed -i "s/^Current=.*/Current=$sddm_theme/" /etc/sddm.conf.d/10-darkroot.conf
+    echo "$theme" > /etc/darkroot/default-theme
+    echo "Login screen: $sddm_theme"
+    exit 0
+fi
+
+T=$THEMES/$theme
+mkdir -p "$CFG/darkroot" "$CFG/hypr" "$CFG/waybar" "$CFG/foot" "$CFG/wofi" "$CFG/mako"
+cp "$T/hypr-theme.conf"  "$CFG/hypr/theme.conf"
+cp "$T/waybar.css"       "$CFG/waybar/theme.css"
+cp "$T/foot-colors.ini"  "$CFG/foot/colors.ini"
+cp "$T/wofi.css"         "$CFG/wofi/style.css"
+cp "$T/mako.conf"        "$CFG/mako/config"
+echo "$theme" > "$STATE"
+touch "$CFG/darkroot/applied"
+
+# live reload when running inside Hyprland
+if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE-} ]]; then
+    hyprctl reload >/dev/null 2>&1
+    pkill -SIGUSR2 waybar 2>/dev/null
+    makoctl reload 2>/dev/null
+    (setsid swaybg -m fill -i "$T/wallpaper.png" >/dev/null 2>&1 &) ; sleep 0.3
+    pgrep -x swaybg | head -n -1 | xargs -r kill 2>/dev/null
+fi
+# GNOME
+if command -v gsettings >/dev/null && [[ ${XDG_CURRENT_DESKTOP-} == *GNOME* ]]; then
+    gsettings set org.gnome.desktop.background picture-uri-dark "file://$T/wallpaper.png"
+    gsettings set org.gnome.desktop.background picture-uri "file://$T/wallpaper.png"
+fi
+(( quiet )) || echo "Darkroot theme: $theme  (login screen too: darkroot-theme $theme --login)"

@@ -1,0 +1,39 @@
+/* Darkroot Shell - dock. Colors come from theme.css (darkroot-theme) */
+@import "theme.css";
+
+* { border: none; min-height: 0; }
+
+window#waybar.dock, window#waybar {
+    background: transparent;
+}
+
+.modules-center {
+    background: @dock_bg;
+    border: 1px solid @line;
+    border-radius: 22px;
+    padding: 6px 8px;
+}
+
+#custom-files, #custom-term, #custom-web, #custom-code,
+#custom-spotify, #custom-claude, #custom-theme, #custom-install {
+    font-size: 22px;
+    min-width: 46px;
+    margin: 0 3px;
+    border-radius: 13px;
+    color: @fg;
+    background: @tile;
+    transition: all 120ms ease;
+}
+
+#custom-files:hover, #custom-term:hover, #custom-web:hover, #custom-code:hover,
+#custom-spotify:hover, #custom-claude:hover, #custom-theme:hover, #custom-install:hover {
+    background: @accent;
+    color: @on_accent;
+    margin-bottom: 4px;
+}
+
+#custom-spotify { color: #1ed760; }
+#custom-web     { color: #ff7139; }
+#custom-code    { color: #3ea6ff; }
+#custom-claude  { color: #d97757; }
+#custom-install { color: @on_accent; background: @accent; }

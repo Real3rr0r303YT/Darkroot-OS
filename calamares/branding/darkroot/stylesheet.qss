@@ -1,0 +1,13 @@
+/* Darkroot OS - Calamares stylesheet */
+QPushButton {
+    background-color: #8B5CF6;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 7px 18px;
+    font-weight: 600;
+}
+QPushButton:hover { background-color: #9D74F8; }
+QPushButton:disabled { background-color: #3A3A4A; color: #9A9AB0; }
+
+#sidebarMenuApp { background-color: #0B0B12; }

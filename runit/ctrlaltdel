@@ -1,5 +1,0 @@
-#!/bin/sh
-# Darkroot runit – Strg+Alt+Entf: Neustart
-. /etc/runit/functions
-chmod 100 /run/runit/stopit /run/runit/reboot
-echo "Das System wird neu gestartet ..." | wall 2>/dev/null

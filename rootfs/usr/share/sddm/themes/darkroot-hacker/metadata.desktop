@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=Darkroot Hacker
+Description=Terminal-style green-on-black login for Darkroot OS Hacker Mode
+Author=Darkroot OS
+License=GPL-3.0
+Type=sddm-theme
+Version=1.0
+Website=https://github.com/Real3rr0r303YT/Darkroot-OS
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=darkroot-hacker
+Theme-API=2.0
+QtVersion=6

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Darkroot OS</title>
+<meta name="description" content="Darkroot OS: a Gentoo-based Linux distribution with its own runit init, a Calamares installer, two debloated desktops and a Hacker Mode.">
+<meta name="theme-color" content="#0B0B12">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Tokens from Figma: "Darkroot Apple" + "Darkroot Hacker" collections */
+  :root {
+    --bg: #0B0B12; --surface: #16161F; --border: #2A2A38; --text: #F5F5F7; --muted: #9A9AB0;
+    --accent: #8B5CF6; --accent-2: #06B6D4; --radius: 20px;
+    --h-bg: #000; --h-surface: #07110B; --h-text: #C8FFD9; --h-muted: #3FAF6A; --h-accent: #00FF9C;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* Nav */
+  nav { position: sticky; top: 0; z-index: 10; backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px); background: rgba(11,11,18,.72); border-bottom: 1px solid rgba(255,255,255,.06); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; letter-spacing: -.02em; }
+  .brand img { width: 32px; height: 32px; }
+  .brand span { color: var(--accent); font-weight: 400; }
+  .links { display: flex; align-items: center; gap: 32px; font-size: 15px; font-weight: 500; color: var(--muted); }
+  .links a:hover { color: var(--text); }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 999px; font-weight: 600; font-size: 16px; transition: transform .15s ease, box-shadow .15s ease, background .15s; }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 8px 30px rgba(139,92,246,.35); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 40px rgba(139,92,246,.5); }
+  .btn-ghost { border: 1px solid rgba(245,245,247,.25); }
+  .btn-ghost:hover { background: rgba(255,255,255,.06); }
+  .btn-sm { padding: 10px 20px; font-size: 15px; }
+
+  /* Hero */
+  .hero { position: relative; text-align: center; padding: 120px 0 120px; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 120%; background: radial-gradient(ellipse at 50% 40%, rgba(124,58,237,.35), rgba(6,182,212,.06) 55%, transparent 75%); pointer-events: none; }
+  .hero > * { position: relative; }
+  .hero .mark { width: 148px; height: 148px; filter: drop-shadow(0 20px 60px rgba(124,58,237,.45)); animation: float 6s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+  .meta { font-family: var(--mono); font-size: 14px; color: var(--accent-2); margin-top: 28px; }
+  h1 { font-size: clamp(48px, 9vw, 84px); line-height: 1; letter-spacing: -.04em; margin: 22px 0 24px; }
+  .lead { max-width: 760px; margin: 0 auto; font-size: clamp(17px, 2.2vw, 21px); line-height: 1.5; color: var(--muted); }
+  .cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 36px; }
+  .note { margin-top: 18px; font-size: 13px; color: var(--muted); font-family: var(--mono); }
+
+  /* Sections */
+  section { padding: 110px 0; }
+  .eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: .12em; color: var(--accent); text-align: center; text-transform: uppercase; }
+  h2 { font-size: clamp(36px, 5.5vw, 52px); letter-spacing: -.03em; text-align: center; margin: 16px 0; }
+  .sub { max-width: 720px; margin: 0 auto; text-align: center; font-size: 19px; line-height: 1.5; color: var(--muted); }
+  .grid { display: grid; gap: 24px; margin-top: 48px; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; transition: border-color .2s, transform .2s; }
+  .card:hover { border-color: rgba(139,92,246,.6); transform: translateY(-2px); }
+  .card .tag { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .card h3 { font-size: 26px; margin: 12px 0; letter-spacing: -.02em; }
+  .card p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 16px; }
+  .feature { background: var(--surface); border-radius: 20px; padding: 28px; }
+  .feature .ic { font-size: 26px; color: var(--accent); }
+  .feature h3 { font-size: 20px; margin: 12px 0 8px; font-weight: 600; }
+  .feature p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+
+  /* Hacker */
+  .hacker { background: var(--h-bg); color: var(--h-text); position: relative; overflow: hidden; }
+  .hacker::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,255,156,.035) 0 1px, transparent 1px 4px); pointer-events: none; }
+  .hacker .eyebrow { color: var(--h-accent); }
+  .hacker h2 { font-family: var(--mono); color: var(--h-accent); text-shadow: 0 0 24px rgba(0,255,156,.55); }
+  .hacker .sub { color: var(--h-muted); }
+  .cursor { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .term { max-width: 900px; margin: 48px auto 0; background: var(--h-surface); border: 1px solid rgba(0,255,156,.35); border-radius: 14px; overflow: hidden; box-shadow: 0 0 60px rgba(0,255,156,.12); position: relative; }
+  .term .bar { display: flex; gap: 8px; padding: 14px 16px; background: #050f09; }
+  .term .bar i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  .term pre { margin: 0; padding: 20px 24px 26px; font-family: var(--mono); font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
+  .term .p { color: var(--h-accent); }
+
+  /* Download */
+  .download { text-align: center; }
+  .dl-box { max-width: 760px; margin: 40px auto 0; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 36px; }
+  .dl-box code { font-family: var(--mono); font-size: 14px; background: #0B0B12; border: 1px solid var(--border); padding: 14px 16px; border-radius: 12px; display: block; text-align: left; overflow-x: auto; color: var(--accent-2); margin-top: 20px; }
+  .steps { text-align: left; color: var(--muted); line-height: 1.8; margin: 24px auto 0; max-width: 560px; }
+
+  footer { border-top: 1px solid rgba(245,245,247,.08); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 36px 24px; font-size: 14px; color: var(--muted); }
+
+  @media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr; } .links a:not(.btn) { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .hero .mark, .cursor { animation: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><img src="logo.svg" alt="">darkroot<span>OS</span></a>
+    <div class="links">
+      <a href="#editions">Editions</a>
+      <a href="#hacker">Hacker Mode</a>
+      <a href="#features">Features</a>
+      <a href="https://github.com/Real3rr0r303YT/Darkroot-OS#readme">Docs</a>
+      <a href="https://github.com/Real3rr0r303YT/Darkroot-OS">GitHub</a>
+      <a class="btn btn-primary btn-sm" href="#download">Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="mark" src="logo.svg" alt="Darkroot OS logo">
+    <div class="meta">v2026.11 · x86_64 · UEFI &amp; BIOS</div>
+    <h1>Gentoo power.<br>Apple calm.</h1>
+    <p class="lead">Darkroot OS is a Gentoo-based Linux distribution with its own runit init, a graphical Calamares installer and two fully debloated desktops, plus a Hacker Mode for security work.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#download">Download ISO</a>
+      <a class="btn btn-ghost" href="https://github.com/Real3rr0r303YT/Darkroot-OS">View on GitHub</a>
+    </div>
+  </div>
+</header>
+
+<section id="editions">
+  <div class="wrap">
+    <div class="eyebrow">Choose your edition</div>
+    <h2>One ISO. Three moods.</h2>
+    <p class="sub">Pick your desktop in the installer. Everything else stays the same rock-solid Gentoo base.</p>
+    <div class="grid grid-3">
+      <article class="card"><div class="tag">DARKROOT SHELL</div><h3>Hyprland, Apple-style</h3><p>Tiling Wayland with a glassy menu bar, a centered dock, blur and rounded corners. Hyprland keybinds, zero bloat.</p></article>
+      <article class="card"><div class="tag">GNOME MINIMAL</div><h3>GNOME, debloated</h3><p>Just the shell, Files, Console and Settings. No games, no web apps and no tracker, so it stays fast and quiet.</p></article>
+      <article class="card"><div class="tag">HACKER MODE</div><h3>Security toolkit</h3><p>Tick one box in Calamares to get nmap, Wireshark, aircrack-ng, hashcat, John, Hydra, sqlmap and a neon terminal theme.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow">Under the hood</div>
+    <h2>Built different.</h2>
+    <div class="grid grid-3">
+      <div class="feature"><div class="ic">⚙</div><h3>Darkroot runit</h3><p>Its own stage 1/2/3 scripts, services in /etc/sv and the dr-sv tool. It boots in seconds.</p></div>
+      <div class="feature"><div class="ic">⬇</div><h3>Calamares installer</h3><p>Point, click, install. Partitioning, users, an edition picker and the Hacker Mode toggle.</p></div>
+      <div class="feature"><div class="ic">◆</div><h3>Binary packages</h3><p>It uses Gentoo's official binhost, so installing takes minutes instead of a whole weekend.</p></div>
+      <div class="feature"><div class="ic">&lt;/&gt;</div><h3>Ready to code</h3><p>VS Code and Claude Code come with it, plus Firefox and a polished terminal.</p></div>
+      <div class="feature"><div class="ic">♫</div><h3>Spotify + Spicetify</h3><p>Spotify is themed out of the box, and the Spicetify Marketplace is one command away.</p></div>
+      <div class="feature"><div class="ic">⌘</div><h3>Custom login</h3><p>SDDM themes in Apple and Hacker style, matching the desktop you picked.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="hacker" class="hacker">
+  <div class="wrap">
+    <div class="eyebrow">// hacker_mode</div>
+    <h2>root@darkroot:~# <span class="cursor">_</span></h2>
+    <p class="sub">Same calm system, different energy. Hacker Mode swaps in a green-on-black theme and a curated security toolkit. Switch anytime with <code>darkroot-theme hacker</code>.</p>
+    <div class="term" role="img" aria-label="Terminal showing installed hacker tools">
+      <div class="bar"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i></div>
+<pre><span class="p">$ darkroot-hacker --status</span>
+[✓] nmap          [✓] wireshark      [✓] aircrack-ng
+[✓] hashcat       [✓] john           [✓] thc-hydra
+[✓] sqlmap        [✓] radare2        [✓] mitmproxy
+<span class="p">$ darkroot-hacker --extras</span>   # metasploit, burpsuite, gobuster via Pentoo
+<span class="p">$ sudo nmap -sV 10.0.0.0/24</span>
+Nmap scan report for router.lan (10.0.0.1) …</pre>
+    </div>
+  </div>
+</section>
+
+<section id="download" class="download">
+  <div class="wrap">
+    <div class="eyebrow">Get it</div>
+    <h2>Download Darkroot OS</h2>
+    <p class="sub">One live ISO for UEFI and BIOS. Boot it, try the Darkroot Shell, then click <b>Install Darkroot</b> in the dock.</p>
+    <div class="dl-box">
+      <a class="btn btn-primary" href="https://github.com/Real3rr0r303YT/Darkroot-OS/releases/latest">Download latest ISO</a>
+      <div class="steps">
+        1. Flash it with Ventoy, balenaEtcher or <code style="display:inline;padding:2px 6px;margin:0">dd</code>.<br>
+        2. Boot from USB and try the live desktop.<br>
+        3. Click <b>Install Darkroot</b>, pick an edition and optionally Hacker Mode.
+      </div>
+      <code>sudo dd if=darkroot-2026.11-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Darkroot OS · GPL-3.0</span>
+    <span>Built on Gentoo Linux · Not affiliated with the Gentoo Foundation</span>
+  </div>
+</footer>
+</body>
+</html>
