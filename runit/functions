@@ -1,0 +1,20 @@
+# Darkroot runit – Hilfsfunktionen (POSIX sh)
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+
+msg()  { printf '\033[1;35m::\033[0m %s\n' "$*"; }
+ok()   { printf '\033[1;32m::\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33m:: %s\033[0m\n' "$*"; }
+
+emergency_shell() {
+    printf '\n\033[1;31m!! %s\033[0m\n' "$*"
+    printf '!! Notfall-Shell. Mit "exit" geht der Start weiter.\n\n'
+    if command -v sulogin >/dev/null 2>&1; then sulogin; else /bin/sh -l; fi
+}
+
+find_udevd() {
+    for d in /lib/systemd/systemd-udevd /usr/lib/systemd/systemd-udevd /sbin/udevd /usr/sbin/udevd /usr/bin/udevd; do
+        [ -x "$d" ] && { echo "$d"; return 0; }
+    done
+    return 1
+}

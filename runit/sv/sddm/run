@@ -1,0 +1,3 @@
+#!/bin/sh
+sv check dbus elogind >/dev/null || exit 1
+exec sddm

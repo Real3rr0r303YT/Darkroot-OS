@@ -1,0 +1,6 @@
+#!/bin/sh
+sv check dbus >/dev/null || exit 1
+for e in /usr/libexec/elogind/elogind /lib64/elogind/elogind /usr/lib/elogind/elogind /lib/elogind/elogind; do
+    [ -x "$e" ] && exec "$e"
+done
+echo "elogind nicht gefunden"; exit 1

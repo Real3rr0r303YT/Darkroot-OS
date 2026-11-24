@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Darkroot Linux – Spicetify installieren und auf Spotify anwenden
+#   darkroot-spicetify                 installieren + anwenden + Marketplace
+#   darkroot-spicetify --install-only  nur Spicetify herunterladen
+set -euo pipefail
+
+SPICE_DIR="$HOME/.spicetify"
+PREFS="$HOME/.config/spotify/prefs"
+SPOTIFY_DIR=$(cat /etc/darkroot/spotify-path 2>/dev/null || echo /opt/spotify/spotify-client)
+
+install_spicetify() {
+    if [[ -x $SPICE_DIR/spicetify ]]; then
+        echo " ✔ Spicetify ist schon installiert"
+        return
+    fi
+    local tag ver
+    tag=$(curl -fsSL https://api.github.com/repos/spicetify/cli/releases/latest | grep -m1 '"tag_name"' | cut -d'"' -f4)
+    [[ -n $tag ]] || { echo "Konnte Spicetify-Version nicht ermitteln" >&2; return 1; }
+    ver=${tag#v}
+    mkdir -p "$SPICE_DIR"
+    curl -fsSL "https://github.com/spicetify/cli/releases/download/${tag}/spicetify-${ver}-linux-amd64.tar.gz" \
+        | tar xz -C "$SPICE_DIR"
+    chmod +x "$SPICE_DIR/spicetify"
+    grep -q '.spicetify' "$HOME/.bashrc" 2>/dev/null || echo 'export PATH="$HOME/.spicetify:$PATH"' >> "$HOME/.bashrc"
+    echo " ✔ Spicetify $ver installiert"
+}
+
+install_spicetify
+export PATH="$SPICE_DIR:$PATH"
+[[ ${1-} == --install-only ]] && exit 0
+
+if [[ ! -f $PREFS ]]; then
+    echo "Spotify wurde noch nie gestartet."
+    echo "→ Öffne Spotify, melde dich an, schließe es wieder und starte dann erneut: darkroot-spicetify"
+    exit 0
+fi
+
+pkill -x spotify 2>/dev/null || true
+spicetify config spotify_path "$SPOTIFY_DIR" prefs_path "$PREFS"
+spicetify backup apply || spicetify apply
+echo " ✔ Spicetify angewendet"
+
+read -rp "Spicetify Marketplace (Themes & Erweiterungen im Spotify-Menü) installieren? [J/n] " a
+if [[ ${a:-j} =~ ^[JjYy]$ ]]; then
+    curl -fsSL https://raw.githubusercontent.com/spicetify/marketplace/main/resources/install.sh | sh
+fi
+echo "Fertig! Starte Spotify neu. 🎵"

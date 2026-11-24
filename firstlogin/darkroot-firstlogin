@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Darkroot Linux – Willkommens-Assistent beim ersten Login
+#  * macOS-Look (WhiteSur: Plasma-Theme, Icons, Cursor, Dock-Layout)
+#  * Claude Code
+#  * Spicetify für Spotify
+MARK="${XDG_CONFIG_HOME:-$HOME/.config}/darkroot/firstlogin-done"
+
+if [[ ${1-} == --autostart ]]; then
+    [[ -e $MARK ]] && exit 0
+    exec konsole --hold -e "$0"
+fi
+
+set -uo pipefail
+P=$'\e[1;35m'; G=$'\e[1;32m'; R=$'\e[1;31m'; N=$'\e[0m'
+step() { printf '\n%s━━ %s ━━%s\n' "$P" "$*" "$N"; }
+ok()   { printf '%s ✔%s %s\n' "$G" "$N" "$*"; }
+fail() { printf '%s ✘%s %s\n' "$R" "$N" "$*"; FAILED=1; }
+FAILED=0
+
+printf '%sWillkommen bei Darkroot Linux, %s!%s\n' "$P" "$USER" "$N"
+echo "Ich richte jetzt deinen Desktop ein. Das dauert ein paar Minuten."
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+# ---------------------------------------------------------------
+step "macOS-Look (WhiteSur)"
+for repo in WhiteSur-kde WhiteSur-icon-theme WhiteSur-cursors; do
+    git clone -q --depth 1 "https://github.com/vinceliuice/$repo" "$tmp/$repo" || fail "Download $repo"
+done
+( cd "$tmp/WhiteSur-kde" && ./install.sh ) >/dev/null 2>&1 && ok "Plasma-Theme" || fail "Plasma-Theme"
+( cd "$tmp/WhiteSur-icon-theme" && ./install.sh -t default ) >/dev/null 2>&1 && ok "Icons" || fail "Icons"
+( cd "$tmp/WhiteSur-cursors" && ./install.sh ) >/dev/null 2>&1 && ok "Cursor" || fail "Cursor"
+
+plasma-apply-lookandfeel --resetLayout --apply com.github.vinceliuice.WhiteSur-dark >/dev/null 2>&1 \
+    && ok "Layout mit Dock + Menüleiste" || fail "Look-and-Feel anwenden"
+plasma-apply-colorscheme WhiteSurDark >/dev/null 2>&1 || true
+plasma-apply-cursortheme WhiteSur-cursors >/dev/null 2>&1 || true
+kwriteconfig6 --file kdeglobals --group Icons --key Theme WhiteSur-dark 2>/dev/null || true
+kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnLeft "XIA" 2>/dev/null || true
+kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnRight "" 2>/dev/null || true
+
+# ---------------------------------------------------------------
+step "Claude Code"
+if command -v claude >/dev/null || [[ -x $HOME/.local/bin/claude ]]; then
+    ok "bereits installiert"
+elif curl -fsSL https://claude.ai/install.sh | bash; then
+    ok "Claude Code installiert – starte es im Terminal mit: claude"
+else
+    fail "Claude Code (später erneut: curl -fsSL https://claude.ai/install.sh | bash)"
+fi
+grep -q '.local/bin' "$HOME/.bashrc" 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+
+# ---------------------------------------------------------------
+step "Spicetify für Spotify"
+darkroot-spicetify --install-only || fail "Spicetify"
+
+# ---------------------------------------------------------------
+mkdir -p "$(dirname "$MARK")"
+touch "$MARK"
+step "Fertig"
+(( FAILED )) && echo "Einige Schritte sind fehlgeschlagen – du kannst 'darkroot-firstlogin' jederzeit erneut starten."
+cat <<EOF
+
+  Nächste Schritte:
+   1. Spotify einmal öffnen, anmelden und wieder schließen
+   2. Im Terminal:  darkroot-spicetify      (Themes + Marketplace)
+   3. Claude Code:  claude
+   4. Dienste:      dr-sv list
+
+  Melde dich einmal ab und wieder an, damit der neue Look überall greift.
+EOF

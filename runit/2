@@ -1,0 +1,16 @@
+#!/bin/sh
+# Darkroot runit – Stage 2: Dienste überwachen
+. /etc/runit/functions
+
+runlevel=default
+for arg in $(cat /proc/cmdline); do
+    case "$arg" in
+        single|darkroot.runlevel=single) runlevel=single ;;
+        darkroot.runlevel=*) runlevel=${arg#darkroot.runlevel=} ;;
+    esac
+done
+[ -d "/etc/runit/runsvdir/$runlevel" ] || runlevel=default
+
+runsvchdir "$runlevel" >/dev/null
+exec env - PATH="$PATH" SVDIR=/var/service runsvdir -P /var/service \
+    'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'

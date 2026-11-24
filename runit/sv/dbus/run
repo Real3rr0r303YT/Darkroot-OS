@@ -1,0 +1,4 @@
+#!/bin/sh
+install -d -m755 /run/dbus
+dbus-uuidgen --ensure=/etc/machine-id
+exec dbus-daemon --system --nofork --nopidfile

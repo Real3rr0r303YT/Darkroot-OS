@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Darkroot Willkommen
+Comment=Richtet den Darkroot-Desktop beim ersten Login ein
+Exec=/usr/local/bin/darkroot-firstlogin --autostart
+Icon=preferences-desktop-theme
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+NoDisplay=true

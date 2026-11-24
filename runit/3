@@ -1,0 +1,29 @@
+#!/bin/sh
+# Darkroot runit – Stage 3: sauber herunterfahren
+. /etc/runit/functions
+
+msg "Darkroot fährt herunter ..."
+
+msg "Dienste werden beendet"
+sv -w 10 force-stop /var/service/* >/dev/null 2>&1
+sv exit /var/service/* >/dev/null 2>&1
+
+hwclock --systohc --utc 2>/dev/null
+
+# Zufalls-Seed sichern
+install -d /var/lib
+dd if=/dev/urandom of=/var/lib/random-seed count=1 bs=512 2>/dev/null
+
+msg "Prozesse werden beendet"
+pkill --inverse -s0,1 -TERM 2>/dev/null
+sleep 1
+pkill --inverse -s0,1 -KILL 2>/dev/null
+
+msg "Dateisysteme werden ausgehängt"
+swapoff -a
+umount -r -a -t nosysfs,noproc,nodevtmpfs,notmpfs,nocgroup2,noefivarfs 2>/dev/null
+mount -o remount,ro / 2>/dev/null
+sync
+
+ok "Bis bald 🖤"
+exit 0
