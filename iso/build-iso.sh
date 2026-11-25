@@ -34,6 +34,10 @@ host_tools() {
         command -v emerge >/dev/null || die "missing tools: ${need[*]}"
         emerge --getbinpkg --noreplace "${need[@]}"
     fi
+    if ! mksquashfs 2>&1 | grep -qw zstd; then
+        info "rebuilding squashfs-tools with zstd support"
+        USE="zstd xz lzma lz4" emerge --oneshot sys-fs/squashfs-tools || warn "zstd not available, falling back"
+    fi
     if [[ ! -d /usr/lib/grub/i386-pc || ! -d /usr/lib/grub/x86_64-efi ]]; then
         info "rebuilding GRUB for both BIOS and UEFI (hybrid ISO)"
         GRUB_PLATFORMS="efi-64 pc" emerge --getbinpkg --oneshot sys-boot/grub
@@ -102,8 +106,12 @@ make_iso() {
     sed "s/@VERSION@/$VERSION/g; s/@LABEL@/$LABEL/g" "$SRC/iso/grub.cfg" > "$ISO/boot/grub/grub.cfg"
     cp "$SRC/assets/logo-512.png" "$ISO/boot/grub/darkroot.png"
 
-    info "squashfs (zstd) ..."
-    mksquashfs "$ROOT" "$ISO/LiveOS/squashfs.img" -comp zstd -Xcompression-level 19 -b 1M -noappend \
+    local comp=(-comp gzip -Xcompression-level 9)
+    if mksquashfs 2>&1 | grep -qw zstd; then comp=(-comp zstd -Xcompression-level 19)
+    elif mksquashfs 2>&1 | grep -qw xz; then comp=(-comp xz)
+    fi
+    info "squashfs (${comp[1]}) ..."
+    mksquashfs "$ROOT" "$ISO/LiveOS/squashfs.img" "${comp[@]}" -b 1M -noappend \
         -e proc sys dev run tmp/darkroot-src \
            var/cache/binpkgs var/cache/distfiles var/tmp/portage \
            var/db/repos/gentoo var/db/repos/hyproverlay \
