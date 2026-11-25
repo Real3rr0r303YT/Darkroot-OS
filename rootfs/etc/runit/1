@@ -5,15 +5,19 @@
 printf '\n\033[1;35m  Darkroot OS\033[0m is starting ...\n\n'
 
 # --- pseudo filesystems -----------------------------------------------
-mountpoint -q /proc || mount -t proc proc /proc -o nosuid,noexec,nodev
-mountpoint -q /sys  || mount -t sysfs sys /sys -o nosuid,noexec,nodev
-mountpoint -q /run  || mount -t tmpfs run /run -o mode=0755,nosuid,nodev
-mountpoint -q /dev  || mount -t devtmpfs dev /dev -o mode=0755,nosuid
+# Do not trust `mountpoint` here: on the live ISO the root is overlayfs on
+# squashfs, where empty lower directories report a different st_dev and look
+# like mount points. /proc is checked by content, the rest via /proc/mounts.
+[ -r /proc/self/mounts ] || mount -t proc proc /proc -o nosuid,noexec,nodev
+is_mounted() { grep -q "^[^ ]* $1 " /proc/self/mounts; }
+is_mounted /sys  || mount -t sysfs sys /sys -o nosuid,noexec,nodev
+is_mounted /run  || mount -t tmpfs run /run -o mode=0755,nosuid,nodev
+is_mounted /dev  || mount -t devtmpfs dev /dev -o mode=0755,nosuid
 mkdir -p /dev/pts /dev/shm /run/lock /run/runit
-mountpoint -q /dev/pts || mount -t devpts devpts /dev/pts -o mode=0620,gid=5,nosuid,noexec
-mountpoint -q /dev/shm || mount -t tmpfs shm /dev/shm -o mode=1777,nosuid,nodev
-mountpoint -q /sys/fs/cgroup || mount -t cgroup2 cgroup2 /sys/fs/cgroup -o nsdelegate,nosuid,noexec,nodev
-if [ -d /sys/firmware/efi/efivars ] && ! mountpoint -q /sys/firmware/efi/efivars; then
+is_mounted /dev/pts || mount -t devpts devpts /dev/pts -o mode=0620,gid=5,nosuid,noexec
+is_mounted /dev/shm || mount -t tmpfs shm /dev/shm -o mode=1777,nosuid,nodev
+is_mounted /sys/fs/cgroup || mount -t cgroup2 cgroup2 /sys/fs/cgroup -o nsdelegate,nosuid,noexec,nodev
+if [ -d /sys/firmware/efi/efivars ] && ! is_mounted /sys/firmware/efi/efivars; then
     mount -t efivarfs efivarfs /sys/firmware/efi/efivars -o nosuid,noexec,nodev
 fi
 chmod 1777 /run/lock
