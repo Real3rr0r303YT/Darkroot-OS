@@ -23,6 +23,16 @@ STAGE3_FLAVOR=stage3-amd64-desktop-openrc
 trap 'die "build failed at line $LINENO"' ERR
 [[ $EUID -eq 0 ]] || die "run as root"
 
+# squashfs_has COMPRESSOR -> true if mksquashfs can really use it
+squashfs_has() {
+    local t rc
+    t=$(mktemp -d)
+    mkdir "$t/in"; echo darkroot > "$t/in/f"
+    mksquashfs "$t/in" "$t/test.sq" -comp "$1" -noappend >/dev/null 2>&1 && rc=0 || rc=1
+    rm -rf "$t"
+    return $rc
+}
+
 host_tools() {
     section "Host tools"
     local need=() t
@@ -34,7 +44,7 @@ host_tools() {
         command -v emerge >/dev/null || die "missing tools: ${need[*]}"
         emerge --getbinpkg --noreplace "${need[@]}"
     fi
-    if [[ $(mksquashfs -help 2>&1 || true) != *zstd* ]]; then
+    if ! squashfs_has zstd; then
         info "rebuilding squashfs-tools with zstd support"
         USE="zstd xz lzma lz4" emerge --oneshot sys-fs/squashfs-tools || warn "zstd not available, falling back"
     fi
@@ -106,15 +116,15 @@ make_iso() {
     sed "s/@VERSION@/$VERSION/g; s/@LABEL@/$LABEL/g" "$SRC/iso/grub.cfg" > "$ISO/boot/grub/grub.cfg"
     cp "$SRC/assets/logo-512.png" "$ISO/boot/grub/darkroot.png"
 
-    local comp=(-comp gzip -Xcompression-level 9) mh
-    mh=$(mksquashfs -help 2>&1 || true)
-    if [[ $mh == *zstd* ]]; then comp=(-comp zstd -Xcompression-level 19)
-    elif [[ $mh == *xz* ]]; then comp=(-comp xz)
+    local comp=(-comp gzip -Xcompression-level 9)
+    if squashfs_has zstd; then comp=(-comp zstd -Xcompression-level 19)
+    elif squashfs_has xz; then comp=(-comp xz)
     fi
     info "squashfs (${comp[1]}) ..."
     mksquashfs "$ROOT" "$ISO/LiveOS/squashfs.img" "${comp[@]}" -b 1M -noappend \
         -e proc sys dev run tmp/darkroot-src \
-           var/cache/binpkgs var/cache/distfiles var/tmp/portage \
+           var/cache/binpkgs var/cache/distfiles var/cache/binhost var/tmp/portage \
+           usr/share/doc usr/share/gtk-doc usr/src \
            var/db/repos/gentoo var/db/repos/hyproverlay \
            boot/initramfs-live.img
 
@@ -122,6 +132,14 @@ make_iso() {
     grub-mkrescue -o "$iso" "$ISO" -- -volid "$LABEL"
     (cd "$OUT" && sha256sum "$(basename "$iso")" > "$(basename "$iso").sha256")
     ok "$iso ($(du -h "$iso" | cut -f1))"
+
+    # GitHub release assets are limited to 2 GiB: also provide split parts
+    if (( $(stat -c %s "$iso") > 2000000000 )); then
+        rm -f "$iso".part-*
+        split -b 1900M -d -a 2 "$iso" "$iso.part-"
+        ok "split for GitHub: $(cd "$OUT" && ls "$(basename "$iso")".part-* | tr '\n' ' ')"
+        info "join with: cat $(basename "$iso").part-* > $(basename "$iso")"
+    fi
 }
 
 main() {

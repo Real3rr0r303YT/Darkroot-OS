@@ -92,6 +92,8 @@ EOF
 dracut --force --no-hostonly "/boot/initramfs-live.img" "$kver"
 
 section "Cleanup"
+# drop build-only dependencies (rust, cmake, meson, ...) - they are not needed at runtime
+emerge --depclean --with-bdeps=n --quiet || warn "depclean skipped"
 rm -f /etc/machine-id /var/lib/dbus/machine-id
 : > /etc/resolv.conf
 rm -rf /var/cache/distfiles/* /var/tmp/portage/* /root/.bash_history
