@@ -34,7 +34,7 @@ host_tools() {
         command -v emerge >/dev/null || die "missing tools: ${need[*]}"
         emerge --getbinpkg --noreplace "${need[@]}"
     fi
-    if ! mksquashfs 2>&1 | grep -qw zstd; then
+    if [[ $(mksquashfs -help 2>&1 || true) != *zstd* ]]; then
         info "rebuilding squashfs-tools with zstd support"
         USE="zstd xz lzma lz4" emerge --oneshot sys-fs/squashfs-tools || warn "zstd not available, falling back"
     fi
@@ -106,9 +106,10 @@ make_iso() {
     sed "s/@VERSION@/$VERSION/g; s/@LABEL@/$LABEL/g" "$SRC/iso/grub.cfg" > "$ISO/boot/grub/grub.cfg"
     cp "$SRC/assets/logo-512.png" "$ISO/boot/grub/darkroot.png"
 
-    local comp=(-comp gzip -Xcompression-level 9)
-    if mksquashfs 2>&1 | grep -qw zstd; then comp=(-comp zstd -Xcompression-level 19)
-    elif mksquashfs 2>&1 | grep -qw xz; then comp=(-comp xz)
+    local comp=(-comp gzip -Xcompression-level 9) mh
+    mh=$(mksquashfs -help 2>&1 || true)
+    if [[ $mh == *zstd* ]]; then comp=(-comp zstd -Xcompression-level 19)
+    elif [[ $mh == *xz* ]]; then comp=(-comp xz)
     fi
     info "squashfs (${comp[1]}) ..."
     mksquashfs "$ROOT" "$ISO/LiveOS/squashfs.img" "${comp[@]}" -b 1M -noappend \
