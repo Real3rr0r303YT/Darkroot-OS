@@ -65,6 +65,9 @@ HOME_URL="https://real3rr0r303yt.github.io/Darkroot-OS/"
 SUPPORT_URL="https://github.com/Real3rr0r303YT/Darkroot-OS/issues"
 EOF
     printf '\n\e[1;35mDarkroot OS\e[0m \\r (\\l)\n\n' > /etc/issue
+    # Gentoo's sudo package does not create the drop-in directory
+    install -d -m750 /etc/sudoers.d
+    grep -q '^@includedir /etc/sudoers.d' /etc/sudoers || echo '@includedir /etc/sudoers.d' >> /etc/sudoers
     echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/10-wheel
     chmod 440 /etc/sudoers.d/10-wheel
     # GRUB
