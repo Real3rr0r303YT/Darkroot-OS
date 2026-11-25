@@ -69,6 +69,7 @@ EOF
 rm -rf /etc/calamares
 install -d /etc/calamares
 cp -a "$DR_SRC/calamares/." /etc/calamares/
+install -d /usr/share/applications
 cat > /usr/share/applications/darkroot-install.desktop <<'EOF'
 [Desktop Entry]
 Type=Application
@@ -81,6 +82,7 @@ EOF
 
 section "Live initramfs"
 kver=$(ls /lib/modules | sort -V | tail -n1)
+install -d /etc/dracut.conf.d
 cat > /etc/dracut.conf.d/90-darkroot-live.conf <<'EOF'
 add_dracutmodules+=" dmsquash-live "
 omit_dracutmodules+=" plymouth "

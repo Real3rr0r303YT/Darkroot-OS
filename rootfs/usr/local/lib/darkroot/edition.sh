@@ -56,5 +56,6 @@ EOF
         set_default_session /usr/share/wayland-sessions/darkroot-shell.desktop
         ;;
 esac
+install -d /etc/darkroot
 echo "$EDITION" > /etc/darkroot/edition
 echo "=== edition done ==="
