@@ -1,4 +1,4 @@
-// Darkroot Shell - dock (bottom, centered)
+// Darkroot Shell - dock (bottom, centered) with real app icons (Papirus)
 {
     "name": "dock",
     "layer": "top",
@@ -7,22 +7,21 @@
     "height": 62,
     "margin-bottom": 8,
     "modules-center": [
-        "custom/files", "custom/term", "custom/web", "custom/code",
-        "custom/spotify", "custom/claude", "custom/theme", "custom/install"
+        "image#files", "image#term", "image#web", "image#code",
+        "image#spotify", "image#claude", "image#theme", "image#install"
     ],
-    "custom/files":   { "format": "", "tooltip": false, "on-click": "thunar" },
-    "custom/term":    { "format": "", "tooltip": false, "on-click": "foot" },
-    "custom/web":     { "format": "", "tooltip": false, "on-click": "firefox-bin" },
-    "custom/code":    { "format": "", "tooltip": false, "on-click": "code" },
-    "custom/spotify": { "format": "", "tooltip": false, "on-click": "spotify" },
-    "custom/claude":  { "format": "", "tooltip": false, "on-click": "foot -T Claude -e sh -c 'claude || exec bash'" },
-    "custom/theme":   { "format": "", "tooltip": false, "on-click": "darkroot-theme toggle" },
-    "custom/install": {
-        "format": "",
+    "image#files":   { "exec": "darkroot-icon org.xfce.thunar Thunar system-file-manager", "interval": 0, "size": 40, "tooltip": false, "on-click": "thunar" },
+    "image#term":    { "exec": "darkroot-icon foot utilities-terminal", "interval": 0, "size": 40, "tooltip": false, "on-click": "foot" },
+    "image#web":     { "exec": "darkroot-icon firefox firefox-bin", "interval": 0, "size": 40, "tooltip": false, "on-click": "firefox-bin" },
+    "image#code":    { "exec": "darkroot-icon visual-studio-code vscode code", "interval": 0, "size": 40, "tooltip": false, "on-click": "code" },
+    "image#spotify": { "exec": "darkroot-icon spotify spotify-client", "interval": 0, "size": 40, "tooltip": false, "on-click": "spotify" },
+    "image#claude":  { "exec": "darkroot-icon claude-code", "interval": 0, "size": 40, "tooltip": false, "on-click": "foot -T Claude -e sh -c 'claude || exec bash'" },
+    "image#theme":   { "exec": "darkroot-icon preferences-desktop-theme preferences-desktop-color", "interval": 0, "size": 40, "tooltip": false, "on-click": "darkroot-theme toggle" },
+    "image#install": {
+        "exec": "test -e /etc/darkroot/live && darkroot-icon darkroot-install",
+        "interval": 0,
+        "size": 40,
         "tooltip": false,
-        "exec": "echo install",
-        "exec-if": "test -e /etc/darkroot/live",
-        "interval": "once",
         "on-click": "darkroot-install"
     }
 }

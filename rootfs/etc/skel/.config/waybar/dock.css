@@ -14,26 +14,17 @@ window#waybar.dock, window#waybar {
     padding: 6px 8px;
 }
 
-#custom-files, #custom-term, #custom-web, #custom-code,
-#custom-spotify, #custom-claude, #custom-theme, #custom-install {
-    font-size: 22px;
+#image.files, #image.term, #image.web, #image.code, #image.spotify, #image.claude, #image.theme, #image.install {
     min-width: 46px;
+    min-height: 46px;
+    padding: 3px;
     margin: 0 3px;
     border-radius: 13px;
-    color: @fg;
-    background: @tile;
+    background: transparent;
     transition: all 120ms ease;
 }
 
-#custom-files:hover, #custom-term:hover, #custom-web:hover, #custom-code:hover,
-#custom-spotify:hover, #custom-claude:hover, #custom-theme:hover, #custom-install:hover {
-    background: @accent;
-    color: @on_accent;
+#image.files:hover, #image.term:hover, #image.web:hover, #image.code:hover, #image.spotify:hover, #image.claude:hover, #image.theme:hover, #image.install:hover {
+    background: @tile;
     margin-bottom: 4px;
 }
-
-#custom-spotify { color: #1ed760; }
-#custom-web     { color: #ff7139; }
-#custom-code    { color: #3ea6ff; }
-#custom-claude  { color: #d97757; }
-#custom-install { color: @on_accent; background: @accent; }

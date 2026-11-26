@@ -19,6 +19,8 @@ RDEPEND="
 	gui-apps/hypridle
 	gui-libs/xdg-desktop-portal-hyprland
 	gui-apps/waybar
+	x11-themes/papirus-icon-theme
+	gnome-base/librsvg
 	gui-apps/wofi
 	gui-apps/foot
 	gui-apps/mako
