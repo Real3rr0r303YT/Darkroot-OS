@@ -96,6 +96,18 @@ curl -fsSL https://github.com/Real3rr0r303YT/Darkroot-OS/archive/refs/heads/main
 cd Darkroot-OS-main && bash install.sh
 ```
 
+### Dual boot / triple boot
+
+Darkroot OS can live next to Windows and other Linux systems:
+
+- In the installer, on **Partitions**, pick **Install alongside** (shrinks an existing partition),
+  **Replace a partition**, or **Manual partitioning** for full control (e.g. Windows + another distro + Darkroot).
+- Reuse the existing EFI system partition; do not format it.
+- GRUB runs `os-prober`, so Windows and other Linux installs appear in the boot menu automatically.
+  If one is missing after the first boot, run `sudo grub-mkconfig -o /boot/grub/grub.cfg`.
+- The boot menu uses a Mac-style startup picker theme (based on the `gentoo-rice-mac` theme from
+  [Gentoo-rice](https://github.com/Real3rr0r303YT/Gentoo-rice)), with a 5 second timeout.
+
 ## Darkroot runit
 
 | Command | What it does |

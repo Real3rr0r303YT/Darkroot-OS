@@ -115,6 +115,10 @@ make_iso() {
     cp "$ROOT/boot/initramfs-live.img" "$ISO/boot/initramfs.img"
     sed "s/@VERSION@/$VERSION/g; s/@LABEL@/$LABEL/g" "$SRC/iso/grub.cfg" > "$ISO/boot/grub/grub.cfg"
     cp "$SRC/assets/logo-512.png" "$ISO/boot/grub/darkroot.png"
+    if [[ -d $ROOT/usr/share/grub/themes/darkroot ]]; then
+        mkdir -p "$ISO/boot/grub/themes"
+        cp -a "$ROOT/usr/share/grub/themes/darkroot" "$ISO/boot/grub/themes/"
+    fi
 
     local comp=(-comp gzip -Xcompression-level 9)
     if squashfs_has zstd; then comp=(-comp zstd -Xcompression-level 19)

@@ -30,7 +30,7 @@ EOF
     cat > /etc/portage/package.use/darkroot <<'EOF'
 sys-kernel/installkernel dracut grub
 media-video/pipewire sound-server
-sys-boot/grub mount
+sys-boot/grub mount fonts truetype
 gui-apps/waybar network pulseaudio tray wifi
 app-admin/calamares -systemd
 sys-fs/squashfs-tools zstd xz lzma lz4

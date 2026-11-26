@@ -27,6 +27,7 @@ RDEPEND="
 	sys-apps/pciutils
 	app-misc/fastfetch
 	sys-boot/grub
+	sys-boot/os-prober
 	sys-boot/efibootmgr
 	sys-kernel/linux-firmware
 	sys-kernel/gentoo-kernel-bin
