@@ -22,7 +22,7 @@ dr_install_rootfs() {
     # new users start with the Apple look already in place
     local A=/usr/share/darkroot/themes/apple S=/etc/skel/.config
     install -d "$S/darkroot" "$S/mako"
-    cp "$A/hypr-theme.conf" "$S/hypr/theme.conf"
+    cp "$A/hypr-theme.lua"  "$S/hypr/theme.lua"
     cp "$A/waybar.css"      "$S/waybar/theme.css"
     cp "$A/foot-colors.ini" "$S/foot/colors.ini"
     cp "$A/wofi.css"        "$S/wofi/style.css"
