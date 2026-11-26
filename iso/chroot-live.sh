@@ -46,6 +46,7 @@ dr_install_rootfs
 dr_setup_runit
 dr_branding
 dr_install_inter_font
+dr_install_macos_look
 dr_spotify_perms
 install -d /etc/darkroot
 echo apple > /etc/darkroot/default-theme

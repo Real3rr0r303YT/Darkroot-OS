@@ -3,6 +3,8 @@
 # Used by the Darkroot Shell dock (Waybar image modules).
 for name in "$@"; do
     for f in \
+        /usr/share/icons/WhiteSur-dark/apps/scalable/$name.svg \
+        /usr/share/icons/WhiteSur/apps/scalable/$name.svg \
         /usr/share/icons/Papirus-Dark/64x64/apps/$name.svg \
         /usr/share/icons/Papirus/64x64/apps/$name.svg \
         /usr/share/icons/hicolor/scalable/apps/$name.svg \

@@ -98,6 +98,31 @@ dr_install_inter_font() {
     rm -rf "$tmp"
 }
 
+# macOS look for the Darkroot Shell (approved by the project owner):
+# WhiteSur icons, cursors and GTK theme by vinceliuice (GPL-3.0), not in ::gentoo.
+dr_install_macos_look() {
+    local tmp f gh=https://github.com/vinceliuice
+    tmp=$(mktemp -d)
+    if [[ ! -d /usr/share/icons/WhiteSur-dark ]] &&
+       git clone -q --depth 1 "$gh/WhiteSur-icon-theme.git" "$tmp/icons"; then
+        (cd "$tmp/icons" && ./install.sh -d /usr/share/icons -t default >/dev/null) || warn "WhiteSur icons failed"
+    fi
+    if [[ ! -d /usr/share/icons/WhiteSur-cursors ]] &&
+       git clone -q --depth 1 "$gh/WhiteSur-cursors.git" "$tmp/cursors"; then
+        cp -r "$tmp/cursors/dist" /usr/share/icons/WhiteSur-cursors || warn "WhiteSur cursors failed"
+    fi
+    if [[ ! -d /usr/share/themes/WhiteSur-Dark ]] &&
+       git clone -q --depth 1 "$gh/WhiteSur-gtk-theme.git" "$tmp/gtk"; then
+        f=$(ls "$tmp"/gtk/release/WhiteSur-Dark.tar.xz 2>/dev/null | head -n1 || true)
+        if [[ -n $f ]]; then tar xf "$f" -C /usr/share/themes; else warn "WhiteSur GTK release not found"; fi
+    fi
+    # default cursor for every session (SDDM and Hyprland too)
+    install -d /usr/share/icons/default
+    printf '[Icon Theme]\nInherits=WhiteSur-cursors\n' > /usr/share/icons/default/index.theme
+    gtk-update-icon-cache -qf /usr/share/icons/WhiteSur-dark 2>/dev/null || true
+    rm -rf "$tmp"
+}
+
 # Spicetify needs write access to the Spotify install
 dr_spotify_perms() {
     local sp
