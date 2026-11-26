@@ -55,7 +55,15 @@ printf 'hostname="darkroot-live"\n' > /etc/conf.d/hostname
 printf 'tmpfs  /tmp  tmpfs  defaults,nosuid,nodev,mode=1777  0 0\n' > /etc/fstab
 touch /etc/darkroot/live
 
+# The build root is reused between builds: drop files that left the repo and
+# give the live user a fresh home from /etc/skel every time.
+rm -f /etc/skel/.config/hypr/hyprland.conf /etc/skel/.config/hypr/theme.conf \
+      /usr/share/darkroot/themes/*/hypr-theme.conf
 id darkroot &>/dev/null || useradd -m -s /bin/bash -c "Darkroot Live" -G users,wheel,audio,video,input darkroot
+rm -rf /home/darkroot
+install -d -m700 -o darkroot -g darkroot /home/darkroot
+cp -a /etc/skel/. /home/darkroot/
+chown -R darkroot:darkroot /home/darkroot
 passwd -d darkroot >/dev/null
 echo "darkroot ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/90-darkroot-live
 chmod 440 /etc/sudoers.d/90-darkroot-live
