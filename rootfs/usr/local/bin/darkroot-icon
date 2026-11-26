@@ -15,7 +15,7 @@ for name in "$@"; do
         /usr/share/pixmaps/$name.svg \
         /usr/share/pixmaps/$name.png \
         /usr/share/darkroot/icons/$name.svg; do
-        [ -r "$f" ] && { echo "$f"; exit 0; }
+        [ -r "$f" ] && { printf %s "$f"; exit 0; }
     done
 done
-echo /usr/share/darkroot/icons/darkroot.svg
+printf %s /usr/share/darkroot/icons/darkroot.svg
