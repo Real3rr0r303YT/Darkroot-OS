@@ -121,8 +121,12 @@ make_iso() {
     elif squashfs_has xz; then comp=(-comp xz)
     fi
     info "squashfs (${comp[1]}) ..."
+    # Keep the mount point directories themselves (only drop their content):
+    # without /proc, /sys, /dev and /run in the live root, dracut's
+    # switch_root cannot move the API filesystems and detaches them instead.
     mksquashfs "$ROOT" "$ISO/LiveOS/squashfs.img" "${comp[@]}" -b 1M -noappend \
-        -e proc sys dev run tmp/darkroot-src \
+        -wildcards -e 'proc/*' 'sys/*' 'dev/*' 'run/*' \
+           'proc/.*' 'sys/.*' 'dev/.*' 'run/.*' tmp/darkroot-src \
            var/cache/binpkgs var/cache/distfiles var/cache/binhost var/tmp/portage \
            usr/share/doc usr/share/gtk-doc usr/src \
            var/db/repos/gentoo var/db/repos/hyproverlay \
