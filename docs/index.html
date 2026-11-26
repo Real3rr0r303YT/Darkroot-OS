@@ -176,7 +176,13 @@ Nmap scan report for router.lan (10.0.0.1) …</pre>
     <h2>Download Darkroot OS</h2>
     <p class="sub">One live ISO for UEFI and BIOS. Boot it, try the Darkroot Shell, then click <b>Install Darkroot</b> in the dock.</p>
     <div class="dl-box">
-      <a class="btn btn-primary" href="https://github.com/Real3rr0r303YT/Darkroot-OS/releases/latest">Download latest ISO</a>
+      <a class="btn btn-primary" href="https://github.com/Real3rr0r303YT/Darkroot-OS/releases/latest">Download v2026.11 (3.2 GB)</a>
+      <div class="steps">
+        The ISO is split into two parts (GitHub allows max. 2 GB per file). Download <b>part-00</b>, <b>part-01</b> and the <b>.sha256</b> file, then join them (Linux/macOS, then Windows):
+      </div>
+      <code>cat darkroot-2026.11-x86_64.iso.part-* &gt; darkroot-2026.11-x86_64.iso</code>
+      <code>copy /b darkroot-2026.11-x86_64.iso.part-00 + darkroot-2026.11-x86_64.iso.part-01 darkroot-2026.11-x86_64.iso</code>
+      <div class="steps" style="font-size:13px;word-break:break-all">SHA256: 8c831b8d292ff0c08f1cf694deb46b9d261824af211be21aa4acaa90543dbc87</div>
       <div class="steps">
         1. Flash it with Ventoy, balenaEtcher or <code style="display:inline;padding:2px 6px;margin:0">dd</code>.<br>
         2. Boot from USB and try the live desktop.<br>

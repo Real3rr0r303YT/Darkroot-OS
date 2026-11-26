@@ -59,8 +59,30 @@ Only use these tools on systems you own or are allowed to test.
 
 ## Install
 
+### Download
+
+Release **v2026.11** · [github.com/Real3rr0r303YT/Darkroot-OS/releases/latest](https://github.com/Real3rr0r303YT/Darkroot-OS/releases/latest)
+
+GitHub limits release files to 2 GB, so the ISO (3.2 GB) ships in **two parts**.
+Download `darkroot-2026.11-x86_64.iso.part-00`, `darkroot-2026.11-x86_64.iso.part-01`
+and `darkroot-2026.11-x86_64.iso.sha256`, then join them:
+
+Linux / macOS:
+```sh
+cat darkroot-2026.11-x86_64.iso.part-* > darkroot-2026.11-x86_64.iso
+sha256sum -c darkroot-2026.11-x86_64.iso.sha256
+```
+
+Windows (cmd):
+```bat
+copy /b darkroot-2026.11-x86_64.iso.part-00 + darkroot-2026.11-x86_64.iso.part-01 darkroot-2026.11-x86_64.iso
+certutil -hashfile darkroot-2026.11-x86_64.iso SHA256
+```
+
+SHA256: `8c831b8d292ff0c08f1cf694deb46b9d261824af211be21aa4acaa90543dbc87`
+
 ### Live ISO (recommended)
-1. Download the ISO from [Releases](https://github.com/Real3rr0r303YT/Darkroot-OS/releases/latest).
+1. Download and join the ISO as described above.
 2. Flash it with Ventoy, balenaEtcher or `dd`:
    ```sh
    sudo dd if=darkroot-2026.11-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync
