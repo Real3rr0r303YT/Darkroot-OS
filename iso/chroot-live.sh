@@ -37,7 +37,8 @@ dr_emerge --oneshot sys-apps/sysvinit
 
 section "Darkroot packages"
 dr_emerge --noreplace darkroot-base/darkroot-shell
-dr_emerge --noreplace app-admin/calamares net-misc/rsync sys-fs/squashfs-tools sys-fs/lvm2 app-misc/jq
+dr_emerge --update --newuse sys-fs/squashfs-tools   # the live squashfs is zstd
+dr_emerge --noreplace app-admin/calamares net-misc/rsync sys-fs/lvm2 app-misc/jq
 grep -q GenuineIntel /proc/cpuinfo && dr_emerge --noreplace sys-firmware/intel-microcode || true
 
 section "Darkroot system"

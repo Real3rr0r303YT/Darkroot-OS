@@ -33,6 +33,7 @@ media-video/pipewire sound-server
 sys-boot/grub mount
 gui-apps/waybar network pulseaudio tray wifi
 app-admin/calamares -systemd
+sys-fs/squashfs-tools zstd xz lzma lz4
 EOF
     cat > /etc/portage/package.license/darkroot <<'EOF'
 app-editors/vscode Microsoft-vscode
