@@ -26,8 +26,8 @@ if [[ -r /etc/vconsole.conf ]]; then
 fi
 xkb=$(sed -n 's/.*"XkbLayout"[[:space:]]*"\([^"]*\)".*/\1/p' /etc/X11/xorg.conf.d/00-keyboard.conf 2>/dev/null | head -n1)
 xkb=${xkb:-us}
-for f in /etc/skel/.config/hypr/hyprland.conf /home/*/.config/hypr/hyprland.conf; do
-    [[ -f $f ]] && sed -i "s/^\(\s*kb_layout\s*=\).*/\1 $xkb/" "$f"
+for f in /etc/skel/.config/hypr/hyprland.lua /home/*/.config/hypr/hyprland.lua; do
+    [[ -f $f ]] && sed -i "s/^\(\s*kb_layout\s*=\s*\)\"[^\"]*\"/\1\"$xkb\"/" "$f"
 done
 [[ -r /etc/hostname ]] && printf 'hostname="%s"\n' "$(cat /etc/hostname)" > /etc/conf.d/hostname
 env-update >/dev/null 2>&1

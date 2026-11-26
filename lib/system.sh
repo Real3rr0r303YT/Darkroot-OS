@@ -49,6 +49,10 @@ dr_setup_runit() {
     done
     ln -sfn /etc/sv/agetty-tty1 /etc/runit/runsvdir/single/agetty-tty1
     ln -sfn /etc/sv/udevd /etc/runit/runsvdir/single/udevd
+
+    # OpenRC user services (pam_openrc) are not used under runit: on every
+    # login they ran `openrc --user` ("Caching service dependencies ...").
+    sed -i '/pam_openrc\.so/s/^\([^#]\)/#\1/' /etc/pam.d/* 2>/dev/null || true
 }
 
 dr_branding() {

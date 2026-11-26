@@ -1,5 +1,13 @@
 #!/bin/sh
 sv check dbus >/dev/null || exit 1
+# elogind may already run because D-Bus activated it (org.freedesktop.login1)
+# before runit got here. Starting a second one exits at once and runsv would
+# restart it in a loop, so supervise the existing instance instead.
+pid=$(cat /run/elogind.pid 2>/dev/null)
+if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    while kill -0 "$pid" 2>/dev/null; do sleep 5; done
+    exit 0
+fi
 for e in /usr/libexec/elogind/elogind /lib64/elogind/elogind /usr/lib/elogind/elogind /lib/elogind/elogind; do
     [ -x "$e" ] && exec "$e"
 done

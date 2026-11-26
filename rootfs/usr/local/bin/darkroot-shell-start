@@ -1,0 +1,14 @@
+#!/bin/sh
+# Darkroot Shell session launcher (used by SDDM).
+# Hyprland aborts when the GPU driver offers no 3D acceleration (e.g. VirtualBox
+# or VMware with 3D disabled). If it dies right after start, retry once with
+# Mesa's software renderer so the desktop still comes up.
+start=$(date +%s)
+Hyprland "$@"
+rc=$?
+if [ "$rc" -ne 0 ] && [ -z "${LIBGL_ALWAYS_SOFTWARE-}" ] && [ $(( $(date +%s) - start )) -lt 20 ]; then
+    echo "darkroot-shell-start: Hyprland exited with $rc, retrying with software rendering" >&2
+    export LIBGL_ALWAYS_SOFTWARE=1
+    exec Hyprland "$@"
+fi
+exit "$rc"

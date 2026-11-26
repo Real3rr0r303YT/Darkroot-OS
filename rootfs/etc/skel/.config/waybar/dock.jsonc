@@ -20,7 +20,7 @@
     "custom/install": {
         "format": "",
         "tooltip": false,
-        "exec": "echo",
+        "exec": "echo install",
         "exec-if": "test -e /etc/darkroot/live",
         "interval": "once",
         "on-click": "darkroot-install"

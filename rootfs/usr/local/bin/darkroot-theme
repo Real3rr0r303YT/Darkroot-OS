@@ -36,7 +36,7 @@ fi
 
 T=$THEMES/$theme
 mkdir -p "$CFG/darkroot" "$CFG/hypr" "$CFG/waybar" "$CFG/foot" "$CFG/wofi" "$CFG/mako"
-cp "$T/hypr-theme.conf"  "$CFG/hypr/theme.conf"
+cp "$T/hypr-theme.lua"   "$CFG/hypr/theme.lua"
 cp "$T/waybar.css"       "$CFG/waybar/theme.css"
 cp "$T/foot-colors.ini"  "$CFG/foot/colors.ini"
 cp "$T/wofi.css"         "$CFG/wofi/style.css"
